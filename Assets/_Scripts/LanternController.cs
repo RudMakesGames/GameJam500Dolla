@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.UI;
 
 public class LanternController : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class LanternController : MonoBehaviour
     public float LightDeductionAmount;
     public float elapsedTime;
     public Light2D LanternLight;
+    private bool HasTriggeredPlatform = false;
+    public Slider IntensitySlider;
     public enum LightIntensityState
     {
         LowIntensity,
@@ -23,6 +26,7 @@ public class LanternController : MonoBehaviour
     public float MiddleThreshold = 60f;
     void Start()
     {
+        
         CurrentLight = MaxLight;
     }
     public void RestoreLight(float light)
@@ -47,7 +51,7 @@ public class LanternController : MonoBehaviour
     }
     public void IncreaseLightConsumption(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && LanternLight.intensity < 21f)
         {
             LightDeductionAmount += 0.5f;
             LanternLight.intensity = LanternLight.intensity + 3f;
@@ -113,6 +117,7 @@ public class LanternController : MonoBehaviour
     }
         void Update()
     {
+        IntensitySlider.value = LanternLight.intensity;
         DiminishLightOverPeriodOfTime(LightDeductionAmount);
         CheckLightIntensityState();
     }
@@ -123,12 +128,30 @@ public class LanternController : MonoBehaviour
         {
             collision.GetComponent<SpriteRenderer>().enabled = true;
         }
+        
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.GetComponent<MovingPlatform>() != null)
+        {
+            MovingPlatform movingPlatform = collision.gameObject.GetComponent<MovingPlatform>();
+            if (LanternLight.intensity >= movingPlatform.Threshold)
+            {
+                Debug.Log("Lantern triggered platform");
+                movingPlatform.TriggerPlatformMovement();
+                HasTriggeredPlatform = true;
+            }
+        }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Hidden"))
         {
             collision.GetComponent<SpriteRenderer>().enabled = false;
+        }
+        if (collision.gameObject.GetComponent<MovingPlatform>() != null)
+        {
+            HasTriggeredPlatform = false;
         }
     }
 }
