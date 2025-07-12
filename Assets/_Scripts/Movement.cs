@@ -3,23 +3,41 @@ using UnityEngine.InputSystem;
 
 public class Movement : MonoBehaviour
 {
-    private Rigidbody2D rb;
+    [Header("Movement")]
+    [SerializeField] private float runningSpeed = 8f;
+    [SerializeField] private float jumpSpeed = 16f;
 
-    [Header("Movement Settings")]
-    [SerializeField] private float jumpSpeed = 12f;
-    [SerializeField] private float runningSpeed = 5f;
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private LayerMask groundLayer;
+    [Header("Jump Settings")]
     [SerializeField] private int maxJumpCount = 2;
 
+    [Header("Jump Improvements")]
+    [SerializeField] private float coyoteTime = 0.15f;
+    [SerializeField] private float jumpBufferTime = 0.2f;
+    [SerializeField] private float jumpCutMultiplier = 0.5f;
+
+    [Header("Ground Check")]
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private float groundCheckRadius = 0.2f;
+    [SerializeField] private Vector2 groundCheckOffset = Vector2.zero;
+
     private float horizontal;
-    private int jumpCount = 0;
-    private bool hasJumped = false;
     private bool isFacingRight = true;
+    private int jumpCount;
+    private bool hasJumped;
+
+    // Jump improvement variables
+    private float coyoteTimeCounter;
+    private float jumpBufferCounter;
+
+    [Header("References")]
+    [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Update()
@@ -27,11 +45,29 @@ public class Movement : MonoBehaviour
         // Movement
         rb.linearVelocity = new Vector2(horizontal * runningSpeed, rb.linearVelocity.y);
 
-        // Ground check
+        // Coyote time logic
         if (IsGrounded())
         {
             jumpCount = 0;
             hasJumped = false;
+            coyoteTimeCounter = coyoteTime;
+        }
+        else
+        {
+            coyoteTimeCounter -= Time.deltaTime;
+        }
+
+        // Jump buffer countdown
+        if (jumpBufferCounter > 0)
+        {
+            jumpBufferCounter -= Time.deltaTime;
+
+            // Execute buffered jump when possible
+            if ((coyoteTimeCounter > 0f || jumpCount < maxJumpCount) && jumpBufferCounter > 0)
+            {
+                PerformJump();
+                jumpBufferCounter = 0f; // Reset buffer
+            }
         }
 
         // Flip sprite
@@ -39,7 +75,7 @@ public class Movement : MonoBehaviour
         else if (isFacingRight && horizontal < 0f) Flip();
     }
 
-    public void MoveHorizontally(InputAction.CallbackContext context)
+    public void Move(InputAction.CallbackContext context)
     {
         horizontal = context.ReadValue<Vector2>().x;
     }
@@ -48,35 +84,59 @@ public class Movement : MonoBehaviour
     {
         if (context.performed)
         {
-            if (IsGrounded() || jumpCount < maxJumpCount)
+            jumpBufferCounter = jumpBufferTime;
+
+            // Immediate jump if conditions are met
+            if (coyoteTimeCounter > 0f || jumpCount < maxJumpCount)
             {
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpSpeed);
-                if (!IsGrounded()) jumpCount++;
-                else jumpCount = 1;
-                hasJumped = true;
+                PerformJump();
+                jumpBufferCounter = 0f; // Reset buffer since we jumped immediately
             }
         }
+
+        // Jump cut - reduce upward velocity when button is released
+        if (context.canceled && rb.linearVelocity.y > 0)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * jumpCutMultiplier);
+        }
+    }
+
+    private void PerformJump()
+    {
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpSpeed);
+
+        if (coyoteTimeCounter > 0f)
+        {
+            jumpCount = 1; // First jump used coyote time
+            coyoteTimeCounter = 0f; // Reset coyote time
+        }
+        else
+        {
+            jumpCount++; // Multi-jump
+        }
+
+        hasJumped = true;
     }
 
     private bool IsGrounded()
     {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+        Vector2 checkPosition = (Vector2)transform.position + groundCheckOffset;
+        return Physics2D.OverlapCircle(checkPosition, groundCheckRadius, groundLayer);
     }
 
     private void Flip()
     {
         isFacingRight = !isFacingRight;
-        Vector3 scale = transform.localScale;
-        scale.x *= -1;
-        transform.localScale = scale;
+        spriteRenderer.flipX = !isFacingRight;
     }
 
     private void OnDrawGizmosSelected()
     {
-        if (groundCheck != null)
+        if (groundCheck != null || Application.isPlaying)
         {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(groundCheck.position, 0.2f);
+            Gizmos.color = IsGrounded() ? Color.green : Color.red;
+            Vector2 checkPosition = (Vector2)transform.position + groundCheckOffset;
+            Gizmos.DrawWireSphere(checkPosition, groundCheckRadius);
         }
     }
 }

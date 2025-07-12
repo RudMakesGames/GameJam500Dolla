@@ -874,7 +874,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 5
+  m_GravityScale: 4
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -935,13 +935,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b32c3907885084e8840e01670b8250, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpSpeed: 12
   runningSpeed: 5
+  jumpSpeed: 15
+  maxJumpCount: 1
+  coyoteTime: 0.15
+  jumpBufferTime: 0.2
+  jumpCutMultiplier: 0.5
   groundCheck: {fileID: 1586645716}
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  maxJumpCount: 1
+  groundCheckRadius: 0.2
+  groundCheckOffset: {x: 0, y: -1.1}
+  rb: {fileID: 0}
+  spriteRenderer: {fileID: 0}
 --- !u!212 &412772438
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1026,7 +1033,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 412772437}
         m_TargetAssemblyTypeName: Movement, Assembly-CSharp
-        m_MethodName: MoveHorizontally
+        m_MethodName: Move
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2076,7 +2083,7 @@ GameObject:
   - component: {fileID: 1021153815}
   - component: {fileID: 1021153814}
   - component: {fileID: 1021153813}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: MovingPlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2156,8 +2163,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37b582340972da640965ac72527fcc6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waypoint1: {fileID: 2008751507}
-  waypoint2: {fileID: 1782036620}
+  waypoint1: {fileID: 1782036620}
+  waypoint2: {fileID: 2008751507}
   speed: 2
   currentTarget: {fileID: 0}
   Threshold: 4
@@ -3297,7 +3304,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1506972818
 RectTransform:
   m_ObjectHideFlags: 0
