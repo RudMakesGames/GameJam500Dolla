@@ -22,6 +22,11 @@ public class Movement : MonoBehaviour
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private Vector2 groundCheckOffset = Vector2.zero;
 
+    [Header("Idle Animation")]
+    [SerializeField] private float idleAnimationSwitchTime = 5f;
+    [SerializeField] private AnimationClip IdleClip;
+    [SerializeField] private AnimationClip Idle2Clip;
+
     private float horizontal;
     private bool isFacingRight = true;
     private int jumpCount;
@@ -31,16 +36,27 @@ public class Movement : MonoBehaviour
     private float coyoteTimeCounter;
     private float jumpBufferCounter;
 
+    // Idle animation variables
+    [SerializeField]
+    private float idleTimer = 0f;
+    private bool isUsingIdle2 = false;
+    private bool wasMovingLastFrame = false;
+
     [Header("References")]
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private SpriteRenderer spriteRenderer;
 
     private Animator anim;
+    private AnimatorOverrideController animatorOverrideController;
+
     private void Start()
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // Set up animator override controller for runtime animation switching
+        SetupAnimatorOverride();
     }
 
     private void Update()
@@ -48,14 +64,27 @@ public class Movement : MonoBehaviour
         // Movement
         rb.linearVelocity = new Vector2(horizontal * runningSpeed, rb.linearVelocity.y);
 
-       if(Math.Abs(horizontal) > 0)
+        bool isMoving = Math.Abs(horizontal) > 0;
+
+        if (isMoving)
         {
             anim.SetBool("IsWalking", true);
+
+            // Reset idle system when starting to move
+            if (!wasMovingLastFrame)
+            {
+                ResetIdleAnimation();
+            }
         }
-       else
+        else
         {
             anim.SetBool("IsWalking", false);
+
+            // Handle idle animation timing
+            HandleIdleAnimations();
         }
+
+        wasMovingLastFrame = isMoving;
 
         // Coyote time logic
         if (IsGrounded())
@@ -85,6 +114,64 @@ public class Movement : MonoBehaviour
         // Flip sprite
         if (!isFacingRight && horizontal > 0f) Flip();
         else if (isFacingRight && horizontal < 0f) Flip();
+    }
+
+    private void HandleIdleAnimations()
+    {
+        // Increment idle timer
+        idleTimer += Time.deltaTime;
+
+        // Check if it's time to switch idle animations
+        if (idleTimer >= idleAnimationSwitchTime)
+        {
+            SwitchIdleAnimation();
+            idleTimer = 0f; // Reset timer
+        }
+    }
+
+    private void SwitchIdleAnimation()
+    {
+        if (animatorOverrideController == null) return;
+
+        // Switch between idle animations
+        isUsingIdle2 = !isUsingIdle2;
+
+        if (isUsingIdle2)
+        {
+            // Switch to Idle2
+            animatorOverrideController["Idle"] = Idle2Clip;
+        }
+        else
+        {
+            // Switch back to Idle
+            animatorOverrideController["Idle"] = IdleClip;
+        }
+    }
+
+    private void ResetIdleAnimation()
+    {
+        idleTimer = 0f;
+        isUsingIdle2 = false;
+
+        // Make sure we're using the default idle animation
+        if (animatorOverrideController != null)
+        {
+            animatorOverrideController["Idle"] = IdleClip;
+        }
+    }
+
+    private void SetupAnimatorOverride()
+    {
+       
+        RuntimeAnimatorController runtimeController = anim.runtimeAnimatorController;
+        animatorOverrideController = new AnimatorOverrideController(runtimeController);
+        anim.runtimeAnimatorController = animatorOverrideController;
+
+        // Set default idle animation
+        if (IdleClip != null)
+        {
+            animatorOverrideController["Idle"] = IdleClip;
+        }
     }
 
     public void Move(InputAction.CallbackContext context)
