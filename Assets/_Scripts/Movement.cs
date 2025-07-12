@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -34,8 +35,10 @@ public class Movement : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private SpriteRenderer spriteRenderer;
 
+    private Animator anim;
     private void Start()
     {
+        anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
@@ -44,6 +47,15 @@ public class Movement : MonoBehaviour
     {
         // Movement
         rb.linearVelocity = new Vector2(horizontal * runningSpeed, rb.linearVelocity.y);
+
+       if(Math.Abs(horizontal) > 0)
+        {
+            anim.SetBool("IsWalking", true);
+        }
+       else
+        {
+            anim.SetBool("IsWalking", false);
+        }
 
         // Coyote time logic
         if (IsGrounded())
