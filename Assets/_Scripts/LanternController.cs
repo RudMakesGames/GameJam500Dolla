@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
@@ -24,9 +25,11 @@ public class LanternController : MonoBehaviour
     [Header("Intensity Thresholds")]
     public float LowThreshold = 25f;
     public float MiddleThreshold = 60f;
+    [SerializeField]
+    private DamageFlash damageFlash;
     void Start()
     {
-        
+        damageFlash = GetComponentInParent<DamageFlash>();
         CurrentLight = MaxLight;
     }
     public void RestoreLight(float light)
@@ -39,6 +42,7 @@ public class LanternController : MonoBehaviour
     }
     public void DamageLight(float light)
     {
+        damageFlash?.CallDamageFlash();
         CurrentLight -= light;
         if (CurrentLight <= 0)
         {
@@ -121,7 +125,7 @@ public class LanternController : MonoBehaviour
         DiminishLightOverPeriodOfTime(LightDeductionAmount);
         CheckLightIntensityState();
     }
-
+   
     private void OnTriggerStay2D(Collider2D collision)
     {
         if(collision.gameObject.CompareTag("Hidden"))

@@ -49,6 +49,9 @@ public class Movement : MonoBehaviour
     private Animator anim;
     private AnimatorOverrideController animatorOverrideController;
 
+    public ParticleSystem DustParticleFx;
+    private bool wasGroundedLastFrame = false;
+    private bool dustParticlesPlaying = false;
     private void Start()
     {
         anim = GetComponent<Animator>();
@@ -61,6 +64,8 @@ public class Movement : MonoBehaviour
 
     private void Update()
     {
+
+
         // Movement
         rb.linearVelocity = new Vector2(horizontal * runningSpeed, rb.linearVelocity.y);
 
@@ -70,7 +75,7 @@ public class Movement : MonoBehaviour
         {
             anim.SetBool("IsWalking", true);
 
-            // Reset idle system when starting to move
+            
             if (!wasMovingLastFrame)
             {
                 ResetIdleAnimation();
@@ -80,14 +85,15 @@ public class Movement : MonoBehaviour
         {
             anim.SetBool("IsWalking", false);
 
-            // Handle idle animation timing
+           
             HandleIdleAnimations();
         }
 
         wasMovingLastFrame = isMoving;
 
         // Coyote time logic
-        if (IsGrounded())
+        bool isCurrentlyGrounded = IsGrounded();
+        if (isCurrentlyGrounded)
         {
             jumpCount = 0;
             hasJumped = false;
@@ -98,16 +104,34 @@ public class Movement : MonoBehaviour
             coyoteTimeCounter -= Time.deltaTime;
         }
 
-        // Jump buffer countdown
+        
+        
+        if (!wasGroundedLastFrame && isCurrentlyGrounded)
+        {
+            // Player just landed - start dust particles
+            if (DustParticleFx != null)
+            {
+                DustParticleFx.Play();
+                dustParticlesPlaying = true;
+            }
+        }
+
+        // Stop dust particles if grounded and moving
+        
+
+        
+        wasGroundedLastFrame = isCurrentlyGrounded;
+
+        
         if (jumpBufferCounter > 0)
         {
             jumpBufferCounter -= Time.deltaTime;
 
-            // Execute buffered jump when possible
+            
             if ((coyoteTimeCounter > 0f || jumpCount < maxJumpCount) && jumpBufferCounter > 0)
             {
                 PerformJump();
-                jumpBufferCounter = 0f; // Reset buffer
+                jumpBufferCounter = 0f; 
             }
         }
 
@@ -115,7 +139,6 @@ public class Movement : MonoBehaviour
         if (!isFacingRight && horizontal > 0f) Flip();
         else if (isFacingRight && horizontal < 0f) Flip();
     }
-
     private void HandleIdleAnimations()
     {
         // Increment idle timer
@@ -226,7 +249,17 @@ public class Movement : MonoBehaviour
     private void Flip()
     {
         isFacingRight = !isFacingRight;
-        spriteRenderer.flipX = !isFacingRight;
+        if (isFacingRight)
+        {
+            transform.rotation = Quaternion.Euler(0, 180, 0);
+            
+        }
+        else
+        {
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+            
+        }
+
     }
 
     private void OnDrawGizmosSelected()

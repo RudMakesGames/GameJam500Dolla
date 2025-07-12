@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Hidden
   - Moving
+  - Enemy
   layers:
   - Default
   - TransparentFX
