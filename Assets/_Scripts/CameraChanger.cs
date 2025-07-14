@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraChanger : MonoBehaviour
 {
-    public CinemachineCamera ZoomedOutCamera,ZoomedInCamera, lakeViewCamera;
+    public CinemachineCamera ZoomedOutCamera,ZoomedInCamera;
     public static CameraChanger instance;
 
     private void Awake()
@@ -15,20 +15,12 @@ public class CameraChanger : MonoBehaviour
     {
         ZoomedOutCamera.Priority = 0;
         ZoomedInCamera.Priority = 1;
-        lakeViewCamera.Priority = -1;
-
-
+        
     }
     public void ZoomOut()
     {
         ZoomedInCamera.Priority = 0;
         ZoomedOutCamera.Priority = 1;
-        lakeViewCamera.Priority = -1;
-
-    }
-
-    public void LakePuzzleView()
-    {
-        lakeViewCamera.Priority = 2;
+       
     }
 }

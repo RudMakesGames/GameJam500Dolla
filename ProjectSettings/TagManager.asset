@@ -50,8 +50,5 @@ TagManager:
   - name: Player
     uniqueID: 203654895
     locked: 0
-  - name: HillLayerback
-    uniqueID: 928974563
-    locked: 0
   m_RenderingLayers:
   - Default
