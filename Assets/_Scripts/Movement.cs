@@ -52,6 +52,15 @@ public class Movement : MonoBehaviour
     public ParticleSystem DustParticleFx;
     private bool wasGroundedLastFrame = false;
     private bool dustParticlesPlaying = false;
+    [Header("Footstep Settings")]
+    public AudioSource footstepAudioSource;
+    public AudioClip grassStep;
+    public AudioClip woodStep;
+    public AudioClip stoneStep;
+    public AudioClip defaultStep;
+
+    public LayerMask groundRaycastLayer;
+    public float groundRaycastDistance = 0.1f;
     private void Start()
     {
         anim = GetComponent<Animator>();
@@ -263,7 +272,44 @@ public class Movement : MonoBehaviour
 
     }
 
-    private void OnDrawGizmosSelected()
+    public void PlayFootstepSound()
+    {
+        // Ensure player is grounded and moving
+        if (!IsGrounded() || Mathf.Abs(horizontal) < 0.1f)
+            return;
+
+        // Raycast downward to detect ground surface
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, groundRaycastDistance, groundRaycastLayer);
+        if (hit.collider == null) return;
+
+        // Get the physics material name
+        var material = hit.collider.sharedMaterial;
+
+        if (material != null)
+        {
+            switch (material.name)
+            {
+                case "Grass":
+                    footstepAudioSource.PlayOneShot(grassStep);
+                    break;
+                case "Wood":
+                    footstepAudioSource.PlayOneShot(woodStep);
+                    break;
+                case "Stone":
+                    footstepAudioSource.PlayOneShot(stoneStep);
+                    break;
+                default:
+                    footstepAudioSource.PlayOneShot(defaultStep);
+                    break;
+            }
+        }
+        else
+        {
+            footstepAudioSource.PlayOneShot(defaultStep);
+        }
+    }
+
+        private void OnDrawGizmosSelected()
     {
         if (groundCheck != null || Application.isPlaying)
         {

@@ -137,4 +137,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fed7beac709f8d4b92da53880637c06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RestoreAmount: 20
+  RestoreAmount: 70
+  LanternRestore: {fileID: 8300000, guid: 338739ce91a50fe45825325ef9fe5949, type: 3}
