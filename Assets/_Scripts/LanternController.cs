@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LanternController : MonoBehaviour
@@ -29,10 +31,15 @@ public class LanternController : MonoBehaviour
     public Volume globalVolume;
     private Vignette vignette;
 
+    public int CurrentHealth, MaxHealth;
+
+    public UnityEvent OnDeath;
+    public string CurrentLevel;
+
     void Start()
     {
         damageFlash = GetComponentInParent<DamageFlash>();
-
+        CurrentHealth = MaxHealth;
         if (globalVolume != null && globalVolume.profile.TryGet(out Vignette v))
         {
             vignette = v;
@@ -44,7 +51,22 @@ public class LanternController : MonoBehaviour
 
         LanternLight.intensity = MaxIntensity;
     }
-
+    public void RestoreHealth(int Amount)
+    {
+        if(CurrentHealth < MaxHealth)
+        {
+            CurrentHealth += Amount;
+        }
+    }
+    public void TakeDamage(int damage)
+    {
+        CurrentHealth -= damage;
+        damageFlash?.CallDamageFlash();
+        if (CurrentHealth <= 0)
+        {
+            HandleDeath();
+        }
+    }
     public void RestoreLight(float Amount)
     {
         if(LanternLight.intensity < MaxIntensity)
@@ -70,19 +92,20 @@ public class LanternController : MonoBehaviour
 
     public void DamageLight(float damage)
     {
-        damageFlash?.CallDamageFlash();
         LanternLight.intensity -= damage;
-        if (LanternLight.intensity <= 0)
-        {
-            HandleDeath();
-        }
     }
 
     public void HandleDeath()
     {
-        Destroy(gameObject.GetComponentInParent<Movement>().gameObject);
+        StartCoroutine(Death());
     }
 
+    IEnumerator Death()
+    {
+        OnDeath?.Invoke();
+        yield return new WaitForSeconds(1.05f);
+        SceneManager.LoadScene(CurrentLevel);
+    }
     void Update()
     {
         if (!CutsceneManager.instance?.isCutsceneActive == true)
