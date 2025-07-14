@@ -61,7 +61,7 @@ Material:
     - _FogSize: 2
     - _WorldSpace: 1
     m_Colors:
-    - _FogColor: {r: 0.79872733, g: 0.8773585, b: 0.86406875, a: 0.19607843}
+    - _FogColor: {r: 0.79872733, g: 0.8773585, b: 0.86406875, a: 0.078431375}
     - _FogSpeed: {r: 1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

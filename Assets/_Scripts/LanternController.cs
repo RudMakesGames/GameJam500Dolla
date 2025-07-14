@@ -2,160 +2,154 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 public class LanternController : MonoBehaviour
 {
-    public float CurrentLight;
-    public float MaxLight;
-    public float LightDeductionAmount;
-    public float elapsedTime;
+    public float MaxIntensity = 21f;
+    public float LightDeductionAmount = 0.5f;
     public Light2D LanternLight;
-    private bool HasTriggeredPlatform = false;
     public Slider IntensitySlider;
-    public enum LightIntensityState
-    {
-        LowIntensity,
-        MiddleIntensity,
-        HighIntensity,
-    }
+
+    private bool HasTriggeredPlatform = false;
+    private DamageFlash damageFlash;
+
+    public AudioSource Heartbeat;
+    public float VolumeInc;
+    public enum LightIntensityState { Low, Middle, High }
     public LightIntensityState CurrentState;
 
-    [Header("Intensity Thresholds")]
-    public float LowThreshold = 25f;
-    public float MiddleThreshold = 60f;
-    [SerializeField]
-    private DamageFlash damageFlash;
+    [Header("Thresholds")]
+    public float LowThreshold = 5f;
+    public float MiddleThreshold = 12f;
+
+    [Header("Vignette Settings")]
+    public Volume globalVolume;
+    private Vignette vignette;
+
     void Start()
     {
         damageFlash = GetComponentInParent<DamageFlash>();
-        CurrentLight = MaxLight;
-    }
-    public void RestoreLight(float light)
-    {
-        if(CurrentLight < MaxLight)
+
+        if (globalVolume != null && globalVolume.profile.TryGet(out Vignette v))
         {
-            CurrentLight += light;
+            vignette = v;
         }
-        
+        else
+        {
+            Debug.LogWarning("Vignette not found on volume!");
+        }
+
+        LanternLight.intensity = MaxIntensity;
     }
-    public void DamageLight(float light)
+
+    public void RestoreLight(float Amount)
+    {
+        if(LanternLight.intensity < MaxIntensity)
+        LanternLight.intensity += Amount;
+    }
+    public void IncreaseLightConsumption(InputAction.CallbackContext context)
+    {
+        if (context.performed && LanternLight.intensity < MaxIntensity && !CutsceneManager.instance?.isCutsceneActive == true)
+        {
+            
+            LanternLight.intensity = Mathf.Min(MaxIntensity, LanternLight.intensity + 3f);
+        }
+    }
+
+    public void DecreaseLightConsumption(InputAction.CallbackContext context)
+    {
+        if (context.performed && !CutsceneManager.instance?.isCutsceneActive == true)
+        {
+            
+            LanternLight.intensity = Mathf.Max(0f, LanternLight.intensity - 3f);
+        }
+    }
+
+    public void DamageLight(float damage)
     {
         damageFlash?.CallDamageFlash();
-        CurrentLight -= light;
-        if (CurrentLight <= 0)
+        LanternLight.intensity -= damage;
+        if (LanternLight.intensity <= 0)
         {
             HandleDeath();
-        }    
+        }
     }
+
     public void HandleDeath()
     {
         Destroy(gameObject.GetComponentInParent<Movement>().gameObject);
     }
-    public void IncreaseLightConsumption(InputAction.CallbackContext context)
+
+    void Update()
     {
-        if (context.performed && LanternLight.intensity < 21f)
+        if (!CutsceneManager.instance?.isCutsceneActive == true)
         {
-            LightDeductionAmount += 0.5f;
-            LanternLight.intensity = LanternLight.intensity + 3f;
-        }
-            
-    }
-    public void DecreaseLightConsumption(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            LightDeductionAmount = Mathf.Max(0.1f, LightDeductionAmount - 0.5f);
-            if(LanternLight.intensity > 0)
-            {
-                LanternLight.intensity = LanternLight.intensity - 3f;
-                if (LanternLight.intensity <= 0)
-                {
-                    LanternLight.intensity = 0;
-                }
-            }
-            
-            
-        }
-            
-    }
-    public void DiminishLightOverPeriodOfTime(float DiminishingAmount)
-    {
-        CurrentLight -= DiminishingAmount * Time.deltaTime;
-        CurrentLight = Mathf.Clamp(CurrentLight, 0, MaxLight);
-        if (CurrentLight <= 0)
-        {
-            HandleDeath();
-        }
-    }
-    void CheckLightIntensityState()
-    {
-        if (CurrentLight <= LowThreshold)
-        {
-            CurrentState = LightIntensityState.LowIntensity;
-        }
-        else if (CurrentLight <= MiddleThreshold)
-        {
-            CurrentState = LightIntensityState.MiddleIntensity;
-        }
-        else
-        {
-            CurrentState = LightIntensityState.HighIntensity;
+            LanternLight.intensity -= LightDeductionAmount * Time.deltaTime;
+            LanternLight.intensity = Mathf.Clamp(LanternLight.intensity, 0, MaxIntensity);
         }
 
+        IntensitySlider.value = LanternLight.intensity;
+        UpdateLightState();
+    }
+
+    void UpdateLightState()
+    {
+        if (LanternLight.intensity <= LowThreshold)
+            CurrentState = LightIntensityState.Low;
+        else if (LanternLight.intensity <= MiddleThreshold)
+            CurrentState = LightIntensityState.Middle;
+        else
+            CurrentState = LightIntensityState.High;
+
+        // Visual feedback through lantern color
         switch (CurrentState)
         {
-            case LightIntensityState.LowIntensity:
-                LanternLight.color = Color.red;
+            case LightIntensityState.Low:
+                Heartbeat.volume = VolumeInc;
+                Heartbeat.Play();
+                if (vignette != null) vignette.intensity.Override(0.5f);
                 break;
-
-            case LightIntensityState.MiddleIntensity:
-                LanternLight.color = Color.yellow;
+            case LightIntensityState.Middle:
+                Heartbeat.volume = 0.3f;
+                Heartbeat.Play();
+                if (vignette != null) vignette.intensity.Override(0.325f);
                 break;
-
-            case LightIntensityState.HighIntensity:
-                LanternLight.color = Color.white;
+            case LightIntensityState.High:
+                if(Heartbeat.isPlaying)
+                {
+                    Heartbeat.Stop();
+                }
+                if (vignette != null) vignette.intensity.Override(0.05f);
                 break;
         }
     }
-        void Update()
-    {
-        IntensitySlider.value = LanternLight.intensity;
-        DiminishLightOverPeriodOfTime(LightDeductionAmount);
-        CheckLightIntensityState();
-    }
-   
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if(collision.gameObject.CompareTag("Hidden"))
-        {
-            collision.GetComponent<SpriteRenderer>().enabled = true;
-        }
-        
-    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.GetComponent<MovingPlatform>() != null)
+        if (collision.CompareTag("Hidden"))
+            collision.GetComponent<SpriteRenderer>().enabled = true;
+
+        if (collision.GetComponent<MovingPlatform>() is MovingPlatform movingPlatform)
         {
-            MovingPlatform movingPlatform = collision.gameObject.GetComponent<MovingPlatform>();
-            if (LanternLight.intensity >= movingPlatform.Threshold)
+            if (LanternLight.intensity >= movingPlatform.Threshold && !HasTriggeredPlatform)
             {
-                Debug.Log("Lantern triggered platform");
                 movingPlatform.TriggerPlatformMovement();
                 HasTriggeredPlatform = true;
             }
         }
     }
+
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Hidden"))
-        {
+        if (collision.CompareTag("Hidden"))
             collision.GetComponent<SpriteRenderer>().enabled = false;
-        }
-        if (collision.gameObject.GetComponent<MovingPlatform>() != null)
-        {
+
+        if (collision.GetComponent<MovingPlatform>() != null)
             HasTriggeredPlatform = false;
-        }
     }
+
+
 }
