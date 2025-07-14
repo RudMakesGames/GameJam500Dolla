@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.XR;
 
 public class Movement : MonoBehaviour
 {
@@ -61,6 +62,8 @@ public class Movement : MonoBehaviour
 
     public LayerMask groundRaycastLayer;
     public float groundRaycastDistance = 0.1f;
+
+    [SerializeField] bool isInverted=false;
     private void Start()
     {
         anim = GetComponent<Animator>();
@@ -69,6 +72,10 @@ public class Movement : MonoBehaviour
 
         // Set up animator override controller for runtime animation switching
         SetupAnimatorOverride();
+
+
+        if (isInverted)
+            rb.gravityScale = -2;
     }
 
     private void Update()
@@ -109,6 +116,7 @@ public class Movement : MonoBehaviour
 
         // Coyote time logic
         bool isCurrentlyGrounded = IsGrounded();
+        /*if (isInverted) Debug.Log(isCurrentlyGrounded);*/
         if (isCurrentlyGrounded)
         {
             jumpCount = 0;
@@ -215,8 +223,17 @@ public class Movement : MonoBehaviour
 
     public void Move(InputAction.CallbackContext context)
     {
-        if(CutsceneManager.instance?.isCutsceneActive == false)
-        horizontal = context.ReadValue<Vector2>().x;
+        if (CutsceneManager.instance?.isCutsceneActive == false)
+        {
+            if (!isInverted)
+            {
+                horizontal = context.ReadValue<Vector2>().x;
+            }
+            else
+            {
+                horizontal = -context.ReadValue<Vector2>().x;
+            }
+        }
     }
 
     public void Jump(InputAction.CallbackContext context)
@@ -237,14 +254,23 @@ public class Movement : MonoBehaviour
         // Jump cut - reduce upward velocity when button is released
         if (context.canceled && rb.linearVelocity.y > 0)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * jumpCutMultiplier);
+            if (!isInverted)
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * jumpCutMultiplier);
+            else
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, -rb.linearVelocity.y * jumpCutMultiplier);
+
             anim.SetTrigger("Jump");
         }
     }
 
     private void PerformJump()
     {
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpSpeed);
+        if(!isInverted)
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpSpeed);
+
+        else
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, -jumpSpeed);
+
 
         if (coyoteTimeCounter > 0f)
         {
