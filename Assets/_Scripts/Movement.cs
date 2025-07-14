@@ -74,7 +74,14 @@ public class Movement : MonoBehaviour
     private void Update()
     {
 
-
+        if(IsGrounded())
+        {
+            anim.SetBool("IsFalling",false);
+        }
+        else
+        {
+            anim.SetBool("IsFalling", true);
+        }
         // Movement
         rb.linearVelocity = new Vector2(horizontal * runningSpeed, rb.linearVelocity.y);
 
@@ -223,6 +230,7 @@ public class Movement : MonoBehaviour
             {
                 PerformJump();
                 jumpBufferCounter = 0f; // Reset buffer since we jumped immediately
+                anim.SetTrigger("Jump");
             }
         }
 
@@ -230,6 +238,7 @@ public class Movement : MonoBehaviour
         if (context.canceled && rb.linearVelocity.y > 0)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * jumpCutMultiplier);
+            anim.SetTrigger("Jump");
         }
     }
 
@@ -246,7 +255,7 @@ public class Movement : MonoBehaviour
         {
             jumpCount++; // Multi-jump
         }
-
+       
         hasJumped = true;
     }
 
