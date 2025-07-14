@@ -199,13 +199,12 @@ public class Movement : MonoBehaviour
 
     public void Move(InputAction.CallbackContext context)
     {
-        if(CutsceneManager.instance?.isCutsceneActive == false)
         horizontal = context.ReadValue<Vector2>().x;
     }
 
     public void Jump(InputAction.CallbackContext context)
     {
-        if (context.performed && CutsceneManager.instance?.isCutsceneActive == false)
+        if (context.performed)
         {
             jumpBufferCounter = jumpBufferTime;
 

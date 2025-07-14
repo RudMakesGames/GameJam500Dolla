@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class LightRestore : MonoBehaviour
 {
-    public float RestoreAmount = 70f;
+    public float RestoreAmount = 20f;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
