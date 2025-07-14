@@ -1,13 +1,28 @@
 fileFormatVersion: 2
-guid: 314efc80ae3b73e49896f9a884f173a9
+guid: f36aa338b33e33144a87017af3ac4d44
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2278566297644842510
-    second: Icon_0
+      213: 4189739405438956884
+    second: tree bark front_0
   - first:
-      213: -2297356003100555120
-    second: Icon_1
+      213: 6480428273967638579
+    second: tree bark front_1
+  - first:
+      213: 5755779845924621925
+    second: tree bark front_2
+  - first:
+      213: -3939428824889779330
+    second: tree bark front_3
+  - first:
+      213: 4059578255695122643
+    second: tree bark front_4
+  - first:
+      213: -1116241847913663227
+    second: tree bark front_5
+  - first:
+      213: 3442121462518486923
+    second: tree bark front_6
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -49,7 +64,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -129,13 +144,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Icon_0
+      name: tree bark front_0
       rect:
         serializedVersion: 2
-        x: 1559
-        y: 1035
-        width: 22
-        height: 14
+        x: 95
+        y: 490
+        width: 37
+        height: 75
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -144,20 +159,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2f1c3bf4608e060e0800000000000000
-      internalID: -2278566297644842510
+      spriteID: 45535a28ac1f42a30800000000000000
+      internalID: 4189739405438956884
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Icon_1
+      name: tree bark front_1
       rect:
         serializedVersion: 2
-        x: 860
-        y: 192
-        width: 310
-        height: 650
+        x: 130
+        y: 152
+        width: 1715
+        height: 761
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -166,8 +181,118 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 098849813e62e10e0800000000000000
-      internalID: -2297356003100555120
+      spriteID: 3382d3e2e2b1fe950800000000000000
+      internalID: 6480428273967638579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tree bark front_2
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 420
+        width: 12
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56e80b14643a0ef40800000000000000
+      internalID: 5755779845924621925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tree bark front_3
+      rect:
+        serializedVersion: 2
+        x: 819
+        y: 214
+        width: 11
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7b92821b565459c0800000000000000
+      internalID: -3939428824889779330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tree bark front_4
+      rect:
+        serializedVersion: 2
+        x: 1814
+        y: 203
+        width: 93
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d09b9c3ae4865830800000000000000
+      internalID: 4059578255695122643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tree bark front_5
+      rect:
+        serializedVersion: 2
+        x: 948
+        y: 184
+        width: 31
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5053ea314ff4280f0800000000000000
+      internalID: -1116241847913663227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tree bark front_6
+      rect:
+        serializedVersion: 2
+        x: 692
+        y: 112
+        width: 19
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b879927ab3fd4cf20800000000000000
+      internalID: 3442121462518486923
       vertices: []
       indices: 
       edges: []
@@ -176,7 +301,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -186,8 +311,13 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Icon_0: -2278566297644842510
-      Icon_1: -2297356003100555120
+      tree bark front_0: 4189739405438956884
+      tree bark front_1: 6480428273967638579
+      tree bark front_2: 5755779845924621925
+      tree bark front_3: -3939428824889779330
+      tree bark front_4: 4059578255695122643
+      tree bark front_5: -1116241847913663227
+      tree bark front_6: 3442121462518486923
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
