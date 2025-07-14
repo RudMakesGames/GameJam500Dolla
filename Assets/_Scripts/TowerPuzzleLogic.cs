@@ -5,7 +5,7 @@ using UnityEngine;
 public class TowerPuzzleLogic : MonoBehaviour
 {
     [SerializeField] GameObject towerA, towerB, towerC;
-
+    public AudioClip RumbleSfx;
     [SerializeField] float towerABuriedHeight, towerBBuriedHeight, towerCBuriedHeight, towerRiseBurySpeed, Amp, freq, gainSpeed;
 
     Vector2 towerARisen, towerBRisen, towerCRisen;
@@ -47,7 +47,8 @@ public class TowerPuzzleLogic : MonoBehaviour
 
     public void RiseTowerA(bool rise)
     {
-        if(rise)
+        
+        if (rise)
             StartCoroutine(RiseBuryTowers(towerA, towerARisen));
 
         else
@@ -56,7 +57,8 @@ public class TowerPuzzleLogic : MonoBehaviour
 
     public void RiseTowerB(bool rise)
     {
-        if(rise)
+       
+        if (rise)
             StartCoroutine(RiseBuryTowers(towerB, towerBRisen));
 
         else
@@ -65,6 +67,7 @@ public class TowerPuzzleLogic : MonoBehaviour
 
     public void RiseTowerC(bool rise)
     {
+        
         if (rise)
             StartCoroutine(RiseBuryTowers(towerC, towerCRisen));
 
@@ -126,37 +129,47 @@ public class TowerPuzzleLogic : MonoBehaviour
 
 
 
-    IEnumerator RiseBuryTowers(GameObject tower, Vector2 pos)
+    IEnumerator RiseBuryTowers(GameObject tower, Vector2 targetPos)
     {
-        /*Debug.Log(tower.transform.position.y);
-        Debug.Log(pos.y);*/
-        StartCoroutine(ShakeValues(true));
-       // Debug.Log("Rising burying");
-        while (!Mathf.Approximately(tower.transform.position.y, pos.y))
+        AudioManager.instance.PlaySoundFXClip(RumbleSfx, transform, 1, Random.Range(0.9f, 1.1f));
+        // Start shaking
+        perlin.FrequencyGain = freq;
+
+        float currentAmplitude = 0f;
+        while (currentAmplitude < Amp)
         {
-            Debug.Log("moving");
-            tower.transform.position =Vector2.MoveTowards(tower.transform.position, pos, Time.deltaTime * towerRiseBurySpeed);
+            currentAmplitude = Mathf.MoveTowards(currentAmplitude, Amp, Time.deltaTime * gainSpeed);
+            perlin.AmplitudeGain = currentAmplitude;
             yield return null;
         }
-        StartCoroutine(ShakeValues(false));
 
-        switch(tower.name)
+        // Move tower while shaking
+        while (!Mathf.Approximately(tower.transform.position.y, targetPos.y))
+        {
+            tower.transform.position = Vector2.MoveTowards(tower.transform.position, targetPos, Time.deltaTime * towerRiseBurySpeed);
+            yield return null;
+        }
+
+        // Smoothly stop shake
+        while (perlin.AmplitudeGain > 0)
+        {
+            perlin.AmplitudeGain = Mathf.MoveTowards(perlin.AmplitudeGain, 0f, Time.deltaTime * gainSpeed * 2);
+            perlin.FrequencyGain = Mathf.MoveTowards(perlin.FrequencyGain, 0f, Time.deltaTime * gainSpeed * 2);
+            yield return null;
+        }
+
+        // Set tower state flags
+        switch (tower.name)
         {
             case "TowerA":
                 towerAUp = !towerAUp;
-                Debug.Log(towerAUp);
                 break;
-
             case "TowerB":
                 towerBUp = !towerBUp;
-                Debug.Log(towerBUp);
                 break;
-
             case "TowerC":
                 towerCUp = !towerCUp;
-                Debug.Log(towerCUp);
                 break;
-
         }
     }
 }
