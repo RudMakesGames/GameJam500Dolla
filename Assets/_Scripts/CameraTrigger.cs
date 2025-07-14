@@ -13,7 +13,7 @@ public class CameraTrigger : MonoBehaviour
                 return;
             }
             CameraChanger.instance.ZoomIn();
-            Debug.Log("zooming in");
+            //Debug.Log("zooming in");
         }
 
         
@@ -30,7 +30,7 @@ public class CameraTrigger : MonoBehaviour
             }
 
             CameraChanger.instance.ZoomIn();
-            Debug.Log("zooming zoomed in");
+            //Debug.Log("zooming zoomed in");
 
         }
     }
@@ -39,7 +39,7 @@ public class CameraTrigger : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             CameraChanger.instance.ZoomOut();
-            Debug.Log("zoomed out");
+           // Debug.Log("zoomed out");
 
         }
     }
