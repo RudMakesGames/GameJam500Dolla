@@ -928,7 +928,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentLevel: 
-  NextLevel: Level1
+  NextLevel: Cutscene
   isALoadingScreen: 0
   isAMenu: 0
   TimeDelay: 3
