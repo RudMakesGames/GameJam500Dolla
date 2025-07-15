@@ -75,6 +75,9 @@ public class TowerPuzzleLogic : MonoBehaviour
         if (puzzleSolved || towerAMoving)
             return;
 
+        GameObject.Find("CutsceneManagers").GetComponent<CutsceneManager>().towersMoving = true;
+
+
         if (rise)
             StartCoroutine(RiseBuryTowers(towerA, towerARisen));
 
@@ -90,6 +93,9 @@ public class TowerPuzzleLogic : MonoBehaviour
         if (puzzleSolved || towerBMoving)
             return;
 
+        GameObject.Find("CutsceneManagers").GetComponent<CutsceneManager>().towersMoving = true;
+
+
         if (rise)
             StartCoroutine(RiseBuryTowers(towerB, towerBRisen));
 
@@ -101,6 +107,8 @@ public class TowerPuzzleLogic : MonoBehaviour
     {
         if (puzzleSolved || towerCMoving)
             return;
+
+        GameObject.Find("CutsceneManagers").GetComponent<CutsceneManager>().towersMoving = true;
 
         if (rise)
             StartCoroutine(RiseBuryTowers(towerC, towerCRisen));
@@ -180,7 +188,6 @@ public class TowerPuzzleLogic : MonoBehaviour
 
     IEnumerator RiseBuryTowers(GameObject tower, Vector2 targetPos)
     {
-        CutsceneManager.instance.isCutsceneActive = true;
         switch (tower.name)
         {
             case "TowerA":
@@ -296,6 +303,6 @@ public class TowerPuzzleLogic : MonoBehaviour
 
         // Make sure it ends exactly on the target color
         starRenderer.color = solColor;
-        CutsceneManager.instance.isCutsceneActive = false;
+        GameObject.Find("CutsceneManagers").GetComponent<CutsceneManager>().towersMoving = false;
     }
 }

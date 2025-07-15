@@ -66,6 +66,7 @@ public class Movement : MonoBehaviour
     [SerializeField] bool isInverted=false;
     private void Start()
     {
+        if(!isInverted)
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -83,11 +84,13 @@ public class Movement : MonoBehaviour
 
         if(IsGrounded())
         {
+            if(!isInverted)
             anim.SetBool("IsFalling",false);
         }
         else
         {
-            anim.SetBool("IsFalling", true);
+            if (!isInverted)
+                anim.SetBool("IsFalling", true);
         }
         // Movement
         rb.linearVelocity = new Vector2(horizontal * runningSpeed, rb.linearVelocity.y);
@@ -96,7 +99,8 @@ public class Movement : MonoBehaviour
 
         if (isMoving)
         {
-            anim.SetBool("IsWalking", true);
+            if (!isInverted)
+                anim.SetBool("IsWalking", true);
 
             
             if (!wasMovingLastFrame)
@@ -106,7 +110,8 @@ public class Movement : MonoBehaviour
         }
         else
         {
-            anim.SetBool("IsWalking", false);
+            if (!isInverted)
+                anim.SetBool("IsWalking", false);
 
            
             HandleIdleAnimations();
@@ -146,6 +151,9 @@ public class Movement : MonoBehaviour
         
         wasGroundedLastFrame = isCurrentlyGrounded;
 
+        if(isInverted)
+        Debug.Log(isCurrentlyGrounded);
+
         
         if (jumpBufferCounter > 0)
         {
@@ -165,6 +173,7 @@ public class Movement : MonoBehaviour
     }
     private void HandleIdleAnimations()
     {
+        if (isInverted) return;
         // Increment idle timer
         idleTimer += Time.deltaTime;
 
@@ -178,7 +187,7 @@ public class Movement : MonoBehaviour
 
     private void SwitchIdleAnimation()
     {
-        if (animatorOverrideController == null) return;
+        if (animatorOverrideController == null || isInverted) return;
 
         // Switch between idle animations
         isUsingIdle2 = !isUsingIdle2;
@@ -197,6 +206,8 @@ public class Movement : MonoBehaviour
 
     private void ResetIdleAnimation()
     {
+        if (isInverted) return;
+
         idleTimer = 0f;
         isUsingIdle2 = false;
 
@@ -209,6 +220,7 @@ public class Movement : MonoBehaviour
 
     private void SetupAnimatorOverride()
     {
+        if(isInverted) return;
        
         RuntimeAnimatorController runtimeController = anim.runtimeAnimatorController;
         animatorOverrideController = new AnimatorOverrideController(runtimeController);
@@ -223,7 +235,7 @@ public class Movement : MonoBehaviour
 
     public void Move(InputAction.CallbackContext context)
     {
-        if (CutsceneManager.instance?.isCutsceneActive == false)
+        if (CutsceneManager.instance?.isCutsceneActive == false && !CutsceneManager.instance.towersMoving)
         {
             if (!isInverted)
             {
@@ -232,8 +244,11 @@ public class Movement : MonoBehaviour
             else
             {
                 horizontal = -context.ReadValue<Vector2>().x;
+                Debug.Log(horizontal);
             }
         }
+        else
+            horizontal = 0;
     }
 
     public void Jump(InputAction.CallbackContext context)
@@ -247,6 +262,8 @@ public class Movement : MonoBehaviour
             {
                 PerformJump();
                 jumpBufferCounter = 0f; // Reset buffer since we jumped immediately
+
+                if (!isInverted)
                 anim.SetTrigger("Jump");
             }
         }
@@ -259,6 +276,7 @@ public class Movement : MonoBehaviour
             else
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, -rb.linearVelocity.y * jumpCutMultiplier);
 
+            if(!isInverted)
             anim.SetTrigger("Jump");
         }
     }

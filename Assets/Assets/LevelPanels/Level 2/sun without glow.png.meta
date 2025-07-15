@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      sun without glow_0: -3358409493280105417
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

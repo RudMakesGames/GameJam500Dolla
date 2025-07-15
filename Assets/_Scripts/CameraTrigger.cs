@@ -12,6 +12,12 @@ public class CameraTrigger : MonoBehaviour
                 CameraChanger.instance.LakePuzzleView();
                 return;
             }
+
+            if(this.gameObject.name=="LakeTrigger")
+            {
+                CameraChanger.instance.LakeView();
+                return;
+            }
             CameraChanger.instance.ZoomIn();
             //Debug.Log("zooming in");
         }
@@ -26,6 +32,12 @@ public class CameraTrigger : MonoBehaviour
             if (this.gameObject.name == "LakeCamTrigger")
             {
                 CameraChanger.instance.LakePuzzleView();
+                return;
+            }
+
+            if (this.gameObject.name == "LakeTrigger")
+            {
+                CameraChanger.instance.LakeView();
                 return;
             }
 

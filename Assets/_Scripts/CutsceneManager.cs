@@ -6,6 +6,7 @@ public class CutsceneManager : MonoBehaviour
 {
     public static CutsceneManager instance;
     public bool isCutsceneActive = false;
+    public bool towersMoving = false;
     public PlayableDirector playableDirector;
     private void Awake()
     {

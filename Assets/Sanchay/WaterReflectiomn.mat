@@ -62,9 +62,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _RefractionValue: -1.62
-    - _WaterSpeed: 0.1
+    - _RefractionValue: 2.03
+    - _WaterSpeed: 0
     m_Colors:
-    - _ChangeColor: {r: 0.60530436, g: 0.9245283, b: 0.7666556, a: 1}
+    - _ChangeColor: {r: 0.111320674, g: 0.9413934, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
