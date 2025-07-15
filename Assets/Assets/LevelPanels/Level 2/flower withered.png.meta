@@ -121,7 +121,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -776,7 +776,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -785,7 +785,33 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      flower withered_0: 9213053989165486396
+      flower withered_1: 8196259368926509909
+      flower withered_10: 1342134846752929159
+      flower withered_11: -1419114199487006513
+      flower withered_12: 7334018747083549545
+      flower withered_13: -9171496415179666024
+      flower withered_14: -9130732258779899721
+      flower withered_15: 3766640697212093923
+      flower withered_16: -4846838375443401870
+      flower withered_17: -7730632302097052902
+      flower withered_18: 9131425679021500130
+      flower withered_19: -8731242403765065887
+      flower withered_2: 8365653472860489914
+      flower withered_20: -4290256805986332512
+      flower withered_21: -7353309342169918728
+      flower withered_22: -7104372125823996517
+      flower withered_23: 3712507555017367240
+      flower withered_24: -1325853522137530510
+      flower withered_25: -1575290372385655089
+      flower withered_3: -5836128585459064107
+      flower withered_4: -2246032428379882706
+      flower withered_5: -6782143735175367291
+      flower withered_6: -271833835033011265
+      flower withered_7: -6481980481929770976
+      flower withered_8: -2149181918799998812
+      flower withered_9: -2113147773106539936
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

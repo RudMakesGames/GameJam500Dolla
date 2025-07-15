@@ -10,6 +10,8 @@ public class MenuManager : MonoBehaviour
     public string NextLevel;
     public bool isALoadingScreen, isAMenu;
     public float TimeDelay = 3;
+    public bool isEndScreen = false;
+    public float Duration;
     private void Awake()
     {
         if (instance == null)
@@ -57,7 +59,10 @@ public class MenuManager : MonoBehaviour
     }
     void Start()
     {
-        
+        if(isEndScreen)
+        {
+            Invoke(nameof(Play),Duration);
+        }
     }
 
     // Update is called once per frame

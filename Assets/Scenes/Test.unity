@@ -12381,7 +12381,7 @@ GameObject:
   - component: {fileID: 260978065}
   - component: {fileID: 260978064}
   m_Layer: 0
-  m_Name: TowerTrigger (1)
+  m_Name: WitherTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12417,6 +12417,9 @@ MonoBehaviour:
   Exit:
     m_PersistentCalls:
       m_Calls: []
+  DesiredDestination: {fileID: 0}
+  PlayerPos: {fileID: 0}
+  virtualCameras: []
 --- !u!61 &260978065
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -22796,6 +22799,9 @@ MonoBehaviour:
   Exit:
     m_PersistentCalls:
       m_Calls: []
+  DesiredDestination: {fileID: 0}
+  PlayerPos: {fileID: 0}
+  virtualCameras: []
 --- !u!61 &1461679642
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -22904,6 +22910,11 @@ MonoBehaviour:
   towerA: {fileID: 1356987444}
   towerB: {fileID: 150239968}
   towerC: {fileID: 1297956416}
+  WispA: {fileID: 0}
+  WispB: {fileID: 0}
+  WispC: {fileID: 0}
+  notSolved: {r: 0, g: 0, b: 0, a: 0}
+  solved: {r: 0, g: 0, b: 0, a: 0}
   RumbleSfx: {fileID: 8300000, guid: a63bad5bf1c1f12428c91d58995e2897, type: 3}
   towerABuriedHeight: -5.8
   towerBBuriedHeight: -5.8
@@ -22913,6 +22924,13 @@ MonoBehaviour:
   freq: 0.25
   gainSpeed: 1.12
   cam: {fileID: 910235123}
+  towerAUp: 0
+  towerBUp: 0
+  towerCUp: 0
+  puzzleSolved: 0
+  towerAMoving: 0
+  towerBMoving: 0
+  towerCMoving: 0
 --- !u!1 &1466995880
 GameObject:
   m_ObjectHideFlags: 0
