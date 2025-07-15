@@ -120,7 +120,7 @@ public class TowerPuzzleLogic : MonoBehaviour
 
         if (towerCUp && towerBUp && towerAUp && !towerBMoving && !towerAMoving && !towerCMoving)
         {
-            Debug.Log("Puzzle solved");
+            //Debug.Log("Puzzle solved");
             if (WispA != null)
                 WispA.SetActive(true);
             if (WispB != null)
@@ -231,23 +231,41 @@ public class TowerPuzzleLogic : MonoBehaviour
         {
             case "TowerA":
                 if (towerAUp)
+                {
                     StartCoroutine(changeColor(towerARenderer, solved));
+                    //tower.transform.Find("eye bg_0 (2)").GetComponent<Animator>().enabled = true;
+                }
                 else
+                {
+                    //tower.transform.Find("eye bg_0 (2)").GetComponent<Animator>().enabled = false;
                     StartCoroutine(changeColor(towerARenderer, notSolved));
+                }
                 towerAMoving = false;
                 break;
             case "TowerB":
                 if (towerBUp)
+                {
                     StartCoroutine(changeColor(towerBRenderer, solved));
+                    //tower.transform.Find("eye bg_0 (2)").GetComponent<Animator>().enabled = true;
+                }
                 else
+                {
+                    //tower.transform.Find("eye bg_0 (2)").GetComponent<Animator>().enabled = false;
                     StartCoroutine(changeColor(towerBRenderer, notSolved));
+                }
                 towerBMoving = false;
                 break;
             case "TowerC":
                 if (towerCUp)
+                {
                     StartCoroutine(changeColor(towerCRenderer, solved));
+                    //tower.transform.Find("eye bg_0 (2)").GetComponent<Animator>().enabled = true;
+                }
                 else
+                {
+                    //tower.transform.Find("eye bg_0 (2)").GetComponent<Animator>().enabled = false;
                     StartCoroutine(changeColor(towerCRenderer, notSolved));
+                }
                 towerCMoving = false;
                 break;
         }
