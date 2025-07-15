@@ -1,10 +1,14 @@
 using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
+using static Sentry.MeasurementUnit;
 
 public class TowerPuzzleLogic : MonoBehaviour
 {
-    [SerializeField] GameObject towerA, towerB, towerC;
+    [SerializeField] GameObject towerA, towerB, towerC, WispA, WispB, WispC;
+
+    [SerializeField] Color notSolved, solved;
+
     public AudioClip RumbleSfx;
     [SerializeField] float towerABuriedHeight, towerBBuriedHeight, towerCBuriedHeight, towerRiseBurySpeed, Amp, freq, gainSpeed;
 
@@ -14,9 +18,12 @@ public class TowerPuzzleLogic : MonoBehaviour
     [SerializeField] CinemachineCamera cam;
     CinemachineBasicMultiChannelPerlin perlin;
 
-    bool towerAUp, towerBUp, towerCUp;
+    public bool towerAUp, towerBUp, towerCUp, puzzleSolved, towerAMoving, towerBMoving, towerCMoving;
 
     bool shake=false;
+
+
+    SpriteRenderer towerARenderer, towerBRenderer, towerCRenderer;
 
     private void Start()
     {
@@ -36,20 +43,43 @@ public class TowerPuzzleLogic : MonoBehaviour
         towerB.transform.position = towerBBuried;
         towerC.transform.position = towerCBuried;
 
-
+        towerARenderer = towerA.transform.Find("star_0").GetComponent<SpriteRenderer>();
+        towerBRenderer = towerB.transform.Find("star_0").GetComponent<SpriteRenderer>();
+        towerCRenderer = towerC.transform.Find("star_0").GetComponent<SpriteRenderer>();
 
         /*StartCoroutine(RiseBuryTowers(towerA, towerABuried));
         StartCoroutine(RiseBuryTowers(towerB, towerBBuried));
         StartCoroutine(RiseBuryTowers(towerC, towerCBuried));*/
 
 
+        towerARenderer.color = notSolved;
+        towerBRenderer.color = notSolved;
+        towerCRenderer.color = notSolved;
+
+
+        if(WispA!=null)
+            WispA.SetActive(false);
+        if (WispB != null)
+            WispB.SetActive(false);
+        if(WispC!=null)
+            WispC.SetActive(false);
+
+        towerAMoving = false;
+        towerBMoving = false;
+        towerCMoving = false;
+
     }
 
     public void RiseTowerA(bool rise)
     {
-        
+        if (puzzleSolved || towerAMoving)
+            return;
+
         if (rise)
             StartCoroutine(RiseBuryTowers(towerA, towerARisen));
+
+       /* else if(!rise && !towerBUp)
+            StartCoroutine(RiseBuryTowers(towerA, towerARisen));*/
 
         else
             StartCoroutine(RiseBuryTowers(towerA, towerABuried));
@@ -57,7 +87,9 @@ public class TowerPuzzleLogic : MonoBehaviour
 
     public void RiseTowerB(bool rise)
     {
-       
+        if (puzzleSolved || towerBMoving)
+            return;
+
         if (rise)
             StartCoroutine(RiseBuryTowers(towerB, towerBRisen));
 
@@ -67,7 +99,9 @@ public class TowerPuzzleLogic : MonoBehaviour
 
     public void RiseTowerC(bool rise)
     {
-        
+        if (puzzleSolved || towerCMoving)
+            return;
+
         if (rise)
             StartCoroutine(RiseBuryTowers(towerC, towerCRisen));
 
@@ -84,19 +118,34 @@ public class TowerPuzzleLogic : MonoBehaviour
         }*/
 
 
-        if (towerCUp && towerBUp && towerAUp)
+        if (towerCUp && towerBUp && towerAUp && !towerBMoving && !towerAMoving && !towerCMoving)
+        {
             Debug.Log("Puzzle solved");
+            if (WispA != null)
+                WispA.SetActive(true);
+            if (WispB != null)
+                WispB.SetActive(true);
+            if (WispC != null)
+                WispC.SetActive(true);
+
+            puzzleSolved = true;
+        }
+
+        GameObject.Find("TopC").GetComponent<Collider2D>().enabled = towerCUp ? true:false;
+        GameObject.Find("TopB").GetComponent<Collider2D>().enabled = towerBUp ? true : false;
+        GameObject.Find("TopA").GetComponent<Collider2D>().enabled = towerAUp ? true : false;
+
     }
 
-   /* IEnumerator waitTest()
-    {
-        yield return new WaitForSeconds(15f);
+    /* IEnumerator waitTest()
+     {
+         yield return new WaitForSeconds(15f);
 
-        RiseBuryTowers(towerA, towerARisen);
-        RiseBuryTowers(towerB, towerBRisen);
-        RiseBuryTowers(towerC, towerCRisen);
-    }
-*/
+         RiseBuryTowers(towerA, towerARisen);
+         RiseBuryTowers(towerB, towerBRisen);
+         RiseBuryTowers(towerC, towerCRisen);
+     }
+ */
     IEnumerator ShakeValues(bool shake)
     {
         //Debug.Log("Shaking");
@@ -131,6 +180,23 @@ public class TowerPuzzleLogic : MonoBehaviour
 
     IEnumerator RiseBuryTowers(GameObject tower, Vector2 targetPos)
     {
+
+        switch (tower.name)
+        {
+            case "TowerA":
+                towerAUp = !towerAUp;
+                towerAMoving = true;
+                break;
+            case "TowerB":
+                towerBUp = !towerBUp;
+                towerBMoving = true;
+                break;
+            case "TowerC":
+                towerCUp = !towerCUp;
+                towerCMoving = true;
+                break;
+        }
+
         AudioManager.instance.PlaySoundFXClip(RumbleSfx, transform, 1, Random.Range(0.9f, 1.1f));
         // Start shaking
         perlin.FrequencyGain = freq;
@@ -158,18 +224,58 @@ public class TowerPuzzleLogic : MonoBehaviour
             yield return null;
         }
 
+
+
         // Set tower state flags
         switch (tower.name)
         {
             case "TowerA":
-                towerAUp = !towerAUp;
+                if (towerAUp)
+                    StartCoroutine(changeColor(towerARenderer, solved));
+                else
+                    StartCoroutine(changeColor(towerARenderer, notSolved));
+                towerAMoving = false;
                 break;
             case "TowerB":
-                towerBUp = !towerBUp;
+                if (towerBUp)
+                    StartCoroutine(changeColor(towerBRenderer, solved));
+                else
+                    StartCoroutine(changeColor(towerBRenderer, notSolved));
+                towerBMoving = false;
                 break;
             case "TowerC":
-                towerCUp = !towerCUp;
+                if (towerCUp)
+                    StartCoroutine(changeColor(towerCRenderer, solved));
+                else
+                    StartCoroutine(changeColor(towerCRenderer, notSolved));
+                towerCMoving = false;
                 break;
         }
+
+    }
+
+
+    IEnumerator changeColor(SpriteRenderer starRenderer, Color solColor)
+    {
+        Color currentColor = starRenderer.color;
+        float elapsedTime = 0f;
+        float duration = 1f;
+
+        while (elapsedTime < duration)
+        {
+            // Calculate the lerp factor (0 to 1)
+            float t = elapsedTime / duration;
+
+            // Lerp between the colors
+            starRenderer.color = Color.Lerp(currentColor, solColor, t);
+
+            // Update elapsed time
+            elapsedTime += Time.deltaTime;
+
+            yield return null;
+        }
+
+        // Make sure it ends exactly on the target color
+        starRenderer.color = solColor;
     }
 }
