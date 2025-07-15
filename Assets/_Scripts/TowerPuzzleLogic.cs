@@ -180,7 +180,7 @@ public class TowerPuzzleLogic : MonoBehaviour
 
     IEnumerator RiseBuryTowers(GameObject tower, Vector2 targetPos)
     {
-
+        CutsceneManager.instance.isCutsceneActive = true;
         switch (tower.name)
         {
             case "TowerA":
@@ -281,6 +281,7 @@ public class TowerPuzzleLogic : MonoBehaviour
 
         while (elapsedTime < duration)
         {
+            
             // Calculate the lerp factor (0 to 1)
             float t = elapsedTime / duration;
 
@@ -295,5 +296,6 @@ public class TowerPuzzleLogic : MonoBehaviour
 
         // Make sure it ends exactly on the target color
         starRenderer.color = solColor;
+        CutsceneManager.instance.isCutsceneActive = false;
     }
 }

@@ -1,8 +1,13 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ExpressionCHanger : MonoBehaviour
 {
+    private void Start()
+    {
+        intensity = GetComponent<Slider>();
+    }
     Slider intensity;
     [SerializeField] Sprite expressionSad, expressionDepressed, expressionNeutral;
     [SerializeField] UnityEngine.UI.Image Expression;
