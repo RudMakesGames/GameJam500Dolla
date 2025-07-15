@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class WiltingChase : MonoBehaviour
 {
-    public int ChaseSpeed = 5;
+    public float ChaseSpeed = 5;
 
 
     private void Update()
@@ -13,7 +13,16 @@ public class WiltingChase : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Player"))
         {
-            Destroy(collision.gameObject);
+            LanternController lanternController = collision.gameObject.GetComponentInChildren<LanternController>();
+            lanternController.LightDeductionAmount = lanternController.LightDeductionAmount + 0.75f;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            LanternController lanternController = collision.gameObject.GetComponentInChildren<LanternController>();
+            lanternController.LightDeductionAmount =  0.25f;
         }
     }
 }
