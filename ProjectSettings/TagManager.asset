@@ -8,6 +8,8 @@ TagManager:
   - Moving
   - Enemy
   - Flower
+  - Cloud
+  - Sky
   layers:
   - Default
   - TransparentFX
